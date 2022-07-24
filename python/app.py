@@ -1,18 +1,25 @@
 ##Import Requirements
+import geocoder
 import serial
 import time
 import datetime
 import requests
 import json
-from flask import Flask, request, render_template
+from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
+#from twilio.rest import Client
 app = Flask(__name__)
 
 @app.route('/chatbot', methods = ['GET', 'POST'])
 def deliveryBot():
     ##create twilio message instance
+    #client = Client('AC0faf539365db81e4b6225f328f6e3c35', '488f6a50ca1c8287e8c961485b689416')
     msg = request.form.get('Body').lower()
     resp = MessagingResponse()
+
+
+    ##define the 
+    ip = geocoder.ip('me')
 
     def get_values():
         ser = serial.Serial('/dev/ttyACM0', 9800, timeout=1) #Opening port for serial connection
@@ -52,7 +59,14 @@ def deliveryBot():
     ]
 
     try:
-        if msg in greetings:
+        #value = get_values()
+        #message = client.messages.create(
+        #    body = 'Replace with disaster message',
+        #    from_='whatsapp:+14155238886',
+        #    to='whatsapp:+263776392244'
+        #)
+
+        if msg in get_time_of_day:
             time_of_day = get_time_of_day(datetime.datetime.now().hour)
             resp.message(
                 '*Good ' + str(time_of_day) + ', I am a WhatsApp ChatBot👋🏽*\n I allow you to monitor your truck remotely'
@@ -62,7 +76,7 @@ def deliveryBot():
                 +"1. Check Engine Temperature.\n"
                 +"2. Check Cargo Temperature.\n"
                 +"3. Check Fuel Level.\n"
-                +"4. Check Truck LOcation.\n"
+                +"4. Check Truck Location.\n"
             )
             return str(resp)
         elif msg == '1':
